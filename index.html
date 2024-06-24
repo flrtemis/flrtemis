@@ -11,42 +11,85 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background: black; /* Dark background color */
+            background: black;
             font-family: 'Roboto', sans-serif;
             color: #fff;
-            flex-direction: column; /* To stack buttons and iframe vertically */
+            flex-direction: column;
         }
         iframe {
             width: 960px;
             height: 540px;
-            border: none; /* Removes the default iframe border */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5); /* Adds a subtle shadow around the iframe */
-        }
-        button {
-            padding: 10px 20px;
-            margin-top: 20px;
             border: none;
-            background-color: #4CAF50;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+        .button-container {
+            position: relative;
+            width: 200px;
+            height: 50px;
+            margin-top: 20px;
+        }
+        .button {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #4CAF50;
+            border: none;
             color: white;
             font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            outline: none;
+            transition: all 0.3s;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
-        button:hover {
-            background-color: #45a049;
+        .button::before, .button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+            transition: transform 0.3s;
+            transform: translate(-50%, -50%) scale(0);
+        }
+        .button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+        .button:hover::before, .button:hover::after {
+            transform: translate(-50%, -50%) scale(1.2);
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <button onclick="window.location.href='https://www.cellmapper.net/map?MCC=311&MNC=480&type=LTE&latitude=40.77939419449601&longitude=-76.23184781996035&zoom=14.51350769460109&showTowers=true&showIcons=true&showTowerLabels=true&clusterEnabled=true&tilesEnabled=true&showOrphans=false&showNoFrequencyOnly=false&showFrequencyOnly=false&showBandwidthOnly=false&DateFilterType=None&showHex=false&showVerifiedOnly=false&showUnverifiedOnly=false&showLTECAOnly=false&showENDCOnly=false&showBand=0&showSectorColours=true&mapType=roadmap&darkMode=false&imperialUnits=false'">Cell Map of Frackville</button>
-    <button onclick="window.location.href='https://drive.google.com/file/d/10IcC0WdGcnUwd21DdddP3RNKEDDXdqHW/view'">First Link</button>
-    <button onclick="window.location.href='https://drive.google.com/file/d/1bJifoatxjcVKHmiLJVmiuQIcDQHbOEot/view'">Second Link</button>
-    <button onclick="window.location.href='https://youtube.com'">YouTube</button>
-    <button onclick="window.location.href='https://soundcloud.com/djclariti/dj-clariti-booti-drop-mashup-edition'">DJ Clariti</button>
-    <button onclick="window.location.href='https://www.youtube.com/playlist?list=PL7u4lWXQ3wfI_7PgX0C-VTiwLeu0S4v34'">Unbox Theropy Playlist</button>
-    <button onclick="window.location.href='https://aitestkitchen.withgoogle.com/tools/music-fx'">MusicFX</button>
-    <button onclick="window.location.href='https://limewire.com/studio/audio/create-music'">LimeWire</button>
-    <button onclick="window.location.href='https://huggingface.co/spaces/facebook/MusicGen'">MusicGen</button>
+    <div class="button-container">
+        <button class="button" onclick="window.location.href='https://www.cellmapper.net/map?MCC=311&MNC=480&type=LTE&latitude=40.77939419449601&longitude=-76.23184781996035&zoom=14.51350769460109&showTowers=true&showIcons=true&showTowerLabels=true&clusterEnabled=true&tilesEnabled=true&showOrphans=false&showNoFrequencyOnly=false&showFrequencyOnly=false&showBandwidthOnly=false&DateFilterType=None&showHex=false&showVerifiedOnly=false&showUnverifiedOnly=false&showLTECAOnly=false&showENDCOnly=false&showBand=0&showSectorColours=true&mapType=roadmap&darkMode=false&imperialUnits=false'">Cell Map of Frackville</button>
+    </div>
+    <div class="button-container">
+        <button class="button" onclick="window.location.href='https://drive.google.com/file/d/10IcC0WdGcnUwd21DdddP3RNKEDDXdqHW/view'">First Link</button>
+    </div>
+    <div class="button-container">
+        <button class="button" onclick="window.location.href='https://drive.google.com/file/d/1bJifoatxjcVKHmiLJVmiuQIcDQHbOEot/view'">Second Link</button>
+    </div>
+    <div class="button-container">
+        <button class="button" onclick="window.location.href='https://youtube.com'">YouTube</button>
+    </div>
+    <div class="button-container">
+        <button class="button" onclick="window.location.href='https://soundcloud.com/djclariti/dj-clariti-booti-drop-mashup-edition'">DJ Clariti</button>
+    </div>
+    <div class="button-container">
+        <button class="button" onclick="window.location.href='https://www.youtube.com/playlist?list=PL7u4lWXQ3wfI_7PgX0C-VTiwLeu0S4v34'">Unbox Theropy Playlist</button>
+    </div>
+    <div class="button-container">
+        <button class="button" onclick="window.location.href='https://aitestkitchen.withgoogle.com/tools/music-fx'">MusicFX</button>
+    </div>
+    <div class="button-container">
+        <button class="button" onclick="window.location.href='https://limewire.com/studio/audio/create-music'">LimeWire</button>
+    </div>
+    <div class="button-container">
+        <button class="button" onclick="window.location.href='https://huggingface.co/spaces/facebook/MusicGen'">MusicGen</button>
+    </div>
 </body>
 </html>
