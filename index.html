@@ -1,157 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>⩘Ꝛ𝘛𝕰𝘔𝘐Ⲋ</title>
-<style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: black;
-            font-family: 'Roboto', sans-serif;
-            color: #fff;
-            flex-direction: column;
-        }
-        iframe {
-            width: 960px;
-            height: 540px;
-            border: none;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-        }
-        .button-container {
-            position: relative;
-            width: 200px;
-            height: 50px;
-            margin-top: 20px;
-        }
-        .button {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: #4CAF50;
-            border: none;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            outline: none;
-            transition: all 0.3s;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
-        .button::before, .button::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            pointer-events: none;
-            transition: transform 0.3s;
-            transform: translate(-50%, -50%) scale(0);
-        }
-        .button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-        }
-        .button:hover::before, .button:hover::after {
-            transform: translate(-50%, -50%) scale(1.2);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⩘Ꝛ𝘛𝕰𝘔𝘐Ⲋ</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,500&display=swap");
+
+    :root {
+      --shiny-cta-bg: #000000;
+      --shiny-cta-bg-subtle: #1a1818;
+      --shiny-cta-fg: #ffffff;
+      --shiny-cta-highlight: blue;
+      --shiny-cta-highlight-subtle: #8484ff;
+    }
+
+    @property --gradient-angle {
+      syntax: "<angle>";
+      initial-value: 0deg;
+      inherits: false;
+    }
+
+    @property --gradient-angle-offset {
+      syntax: "<angle>";
+      initial-value: 0deg;
+      inherits: false;
+    }
+
+    @property --gradient-percent {
+      syntax: "<percentage>";
+      initial-value: 5%;
+      inherits: false;
+    }
+
+    @property --gradient-shine {
+      syntax: "<color>";
+      initial-value: white;
+      inherits: false;
+    }
+
+    .shiny-cta {
+      --animation: gradient-angle linear infinite;
+      --duration: 3s;
+      --shadow-size: 2px;
+      isolation: isolate;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      outline-offset: 4px;
+      padding: 1.25rem 2.5rem;
+      font-family: inherit;
+      font-size: 1.125rem;
+      line-height: 1.2;
+      border: 1px solid transparent;
+      border-radius: 360px;
+      color: var(--shiny-cta-fg);
+      background: linear-gradient(var(--shiny-cta-bg), var(--shiny-cta-bg))
+          padding-box,
+        conic-gradient(
+            from calc(var(--gradient-angle) - var(--gradient-angle-offset)),
+            transparent,
+            var(--shiny-cta-highlight) var(--gradient-percent),
+            var(--gradient-shine) calc(var(--gradient-percent) * 2),
+            var(--shiny-cta-highlight) calc(var(--gradient-percent) * 3),
+            transparent calc(var(--gradient-percent) * 4)
+          )
+          border-box;
+      box-shadow: inset 0 0 0 1px var(--shiny-cta-bg-subtle);
+    }
+
+    .shiny-cta::before,
+    .shiny-cta::after,
+    span::before {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      inset-inline-start: 50%;
+      inset-block-start: 50%;
+      translate: -50% -50%;
+      z-index: -1;
+    }
+
+    .shiny-cta:active {
+      translate: 0 1px;
+    }
+
+    /* Dots pattern */
+    .shiny-cta::before {
+      --size: calc(100% - var(--shadow-size) * 3);
+      --position: 2px;
+      --space: calc(var(--position) * 2);
+      width: var(--size);
+      height: var(--size);
+      background: radial-gradient(
+          circle at var(--position) var(--position),
+          white calc(var(--position) / 4),
+          transparent 0
+        )
+        padding-box;
+      background-size: var(--space) var(--space);
+      background-repeat: space;
+      mask-image: conic-gradient(
+        from calc(var(--gradient-angle) + 45deg),
+        black,
+        transparent 10% 90%,
+        black
+      );
+      border-radius: inherit;
+      opacity: 0.4;
+      z-index: -1;
+    }
+
+    /* Inner shimmer */
+    .shiny-cta::after {
+      --animation: shimmer linear infinite;
+      width: 100%;
+      aspect-ratio: 1;
+      background: linear-gradient(
+        -50deg,
+        transparent,
+        var(--shiny-cta-highlight),
+        transparent
+      );
+      mask-image: radial-gradient(circle at bottom, transparent 40%, black);
+      opacity: 0.6;
+    }
+
+    .shiny-cta span {
+      z-index: 1;
+    }
+
+    .shiny-cta span::before {
+      --size: calc(100% + 1rem);
+      width: var(--size);
+      height: var(--size);
+      box-shadow: inset 0 -1ex 2rem 4px var(--shiny-cta-highlight);
+      opacity: 0;
+    }
+
+    /* Animate */
+    .shiny-cta {
+      --transition: 800ms cubic-bezier(0.25, 1, 0.5, 1);
+      transition: var(--transition);
+      transition-property: --gradient-angle-offset, --gradient-percent,
+        --gradient-shine;
+    }
+
+    .shiny-cta,
+    .shiny-cta::before,
+    .shiny-cta::after {
+      animation: var(--animation) var(--duration),
+        var(--animation) calc(var(--duration) / 0.4) reverse paused;
+      animation-composition: add;
+    }
+
+    .shiny-cta span::before {
+      transition: opacity var(--transition);
+      animation: calc(var(--duration) * 1.5) breathe linear infinite;
+    }
+
+    .shiny-cta:is(:hover, :focus-visible) {
+      --gradient-percent: 20%;
+      --gradient-angle-offset: 95deg;
+      --gradient-shine: var(--shiny-cta-highlight-subtle);
+
+      .shiny-cta,
+      .shiny-cta::before,
+      .shiny-cta::after {
+        animation-play-state: running;
+      }
+
+      .shiny-cta span::before {
+        opacity: 1;
+      }
+    }
+
+    @keyframes gradient-angle {
+      to {
+        --gradient-angle: 360deg;
+      }
+    }
+
+    @keyframes shimmer {
+      to {
+        rotate: 360deg;
+      }
+    }
+
+    @keyframes breathe {
+      from,
+      to {
+        scale: 1;
+      }
+      50% {
+        scale: 1.2;
+      }
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      grid-template-columns: repeat(3, 1fr); /* 3 columns */
+      grid-template-rows: auto; /* Rows adjust automatically */
+      gap: 20px; /* Space between buttons */
+      color: white;
+      background: #02040c;
+      font-family: "Inter", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 500;
+      font-style: normal;
+      -webkit-font-smoothing: antialiased;
+    }
+  </style>
 </head>
 <body>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://www.wcofun.net/rick-and-morty-season-7-episode-1-how-poopy-got-his-poop-back'">Rick аnd Morty</button>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://www.google.com/search?q=translate&sca_esv=fb33ff5e053ad238&source=hp&ei=LdH-Zq6TEs7cptQP48GEqAQ&oq=tra&gs_lp=EhFtb2JpbGUtZ3dzLXdpei1ocCIDdHJhKgIIADILEAAYgAQYsQMYgwEyCxAuGIAEGLEDGIMBMg4QLhiABBixAxjRAxjHATIFEC4YgAQyDhAuGIAEGLEDGNEDGMcBMgUQABiABDILEAAYgAQYsQMYgwEyCxAuGIAEGLEDGIMBSNoRUPUHWLULcAF4AJABAJgBf6AB2wKqAQMwLjO4AQHIAQD4AQGYAgSgAtQDqAIPwgIQEAAYAxjlAhjqAhiMAxiPAcICEBAuGAMY5QIY6gIYjAMYjwHCAg4QLhiABBixAxiDARiKBcICERAuGIAEGLEDGNEDGIMBGMcBwgIIEC4YgAQYsQOYAySSBwMxLjOgB-4q&sclient=mobile-gws-wiz-hp'">Google Translate</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://www.youtube.com/watch?v=-d8sNML3WT8&list=PLmur3Z0Afau4wSl9By0h8qIgOBbN9Zmhd'">Business Insider</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://www.ticketmaster.com/'">TicketMaster</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://www.youtube.com/@BranchEducation/playlists'">Branch Education</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://www.apkmirror.com'">APKMirror Apps</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://apkpure.com/'">Apkpure Apps</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://modyolo.com/'">Modyolo Apps</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://en.uptodown.com/'">Uptodown Apps</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://www.youtube.com/@melodysheep'">Melodysheep</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://convai.com/pipeline/dashboard/'">Convai</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://chatgpt.com/'">ChаtGPT</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://drive.google.com/drive/folders/1Hsk22Z1fxQ0gc9_Pu-EVKUUlXKhdILc2?usp=drive_link'">NetGuard</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://pixabay.com/music/search/user_id%3a24397640/?pagi=2'">ρх</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://www.cellmapper.net/map?MCC=311&amp;MNC=480&amp;type=LTE&amp;latitude=40.77939419449601&amp;longitude=-76.23184781996035&amp;zoom=14.51350769460109&amp;showTowers=true&amp;showIcons=true&amp;showTowerLabels=true&amp;clusterEnabled=true&amp;tilesEnabled=true&amp;showOrphans=false&amp;showNoFrequencyOnly=false&amp;showFrequencyOnly=false&amp;showBandwidthOnly=false&amp;DateFilterType=None&amp;showHex=false&amp;showVerifiedOnly=false&amp;showUnverifiedOnly=false&amp;showLTECAOnly=false&amp;showENDCOnly=false&amp;showBand=0&amp;showSectorColours=true&amp;mapType=roadmap&amp;darkMode=false&amp;imperialUnits=false'">Cell Map of Frackville</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://venice.ai/home?utm_source=google&utm_medium=cpc&utm_campaign=21334989320&utm_term=ai%20chat&gad_source=1&gclid=EAIaIQobChMI0fmt0bHuhwMVrGFHAR3lrA8uEAAYASAAEgIvB_D_BwE'">venıce</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://crushon.ai'">CrushOn.AI</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://quackr.io/temporary-numbers/united-states/'">Temp Number</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://temp-mail.org/en/change'">Temp Mail</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://www.joyland.ai'">Joyland</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://drive.google.com/file/d/10IcC0WdGcnUwd21DdddP3RNKEDDXdqHW/view'">First Link</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://drive.google.com/file/d/1bJifoatxjcVKHmiLJVmiuQIcDQHbOEot/view'">Second Link</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://youtube.com/@rtmis'">YouTube</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://soundcloud.com/djclariti/dj-clariti-booti-drop-mashup-edition'">DJ Clariti</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://www.youtube.com/playlist?list=PL7u4lWXQ3wfI_7PgX0C-VTiwLeu0S4v34'">Unbox Therapy Playlist</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://aitestkitchen.withgoogle.com/tools/music-fx'">MusicFX</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://limewire.com/studio/audio/create-music'">LimeWire</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://huggingface.co/spaces/facebook/MusicGen'">MusicGen</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='https://www.littleleague.org/little-league-fast-facts/'">LLWS Facts</button>
-</div>
-<div class="button-container">
-<button class="button" onclick="window.location.href='apk_files.html'">Android Apps</button>
-</div>
+
+  <!-- 20 Shiny CTA Buttons -->
+  <button class="shiny-cta" onclick="buttonClick(1)"><span>Watch Cartoons Online</span></button>
+  <button class="shiny-cta" onclick="buttonClick(2)"><span>Google Translate</span></button>
+  <button class="shiny-cta" onclick="buttonClick(3)"><span>melodysheep</span></button>
+  <button class="shiny-cta" onclick="buttonClick(4)"><span>GitHub</span></button>
+  <button class="shiny-cta" onclick="buttonClick(5)"><span>ChatGPT</span></button>
+  
+  <button class="shiny-cta" onclick="buttonClick(6)"><span>YouTube</span></button>
+  <button class="shiny-cta" onclick="buttonClick(7)"><span>APKMirror</span></button>
+  <button class="shiny-cta" onclick="buttonClick(8)"><span>APKPure</span></button>
+  <button class="shiny-cta" onclick="buttonClick(9)"><span>MODYOLO</span></button>
+  <button class="shiny-cta" onclick="buttonClick(10)"><span>uptodown</span></button>
+  
+  <button class="shiny-cta" onclick="buttonClick(11)"><span>Temporary Number</span></button>
+  <button class="shiny-cta" onclick="buttonClick(12)"><span>Temporary Email</span></button>
+  <button class="shiny-cta" onclick="buttonClick(13)"><span>Branch Education</span></button>
+  <button class="shiny-cta" onclick="buttonClick(14)"><span>Convai</span></button>
+  <button class="shiny-cta" onclick="buttonClick(15)"><span>Crushon AI</span></button>
+  
+  <button class="shiny-cta" onclick="buttonClick(16)"><span>MusicFX</span></button>
+  <button class="shiny-cta" onclick="buttonClick(17)"><span>Android Apps</span></button>
+  <button class="shiny-cta" onclick="buttonClick(18)"><span>LimeWire</span></button>
+  <button class="shiny-cta" onclick="buttonClick(19)"><span>MusicGen</span></button>
+  <button class="shiny-cta" onclick="buttonClick(20)"><span>Microsoft</span></button>
+
+  <script>
+    function buttonClick(num) {
+      const websites = [
+        "https://www.wcofun.net/", "https://www.google.com/search?q=english+to+spanish&source=hp&iflsig=AL9hbdgAAAAAZyGMPLvkd73HmTflqSYJdlVSvmh1LNVj&oq=english+", "https://www.youtube.com/@melodysheep",
+        "https://github.com/flrtemis", "https://chatgpt.com/", "https://www.youtube.com/@flrtemis",
+        "https://www.apkmirror.com/", "https://apkpure.com/", "https://modyolo.com/apps",
+        "https://en.uptodown.com", "https://quackr.io/temporary-numbers/united-states", "https://temp-mail.org/en/",
+        "https://branch.education/", "https://convai.com/pipeline/create-character", "https://crushon.ai",
+        "https://aitestkitchen.withgoogle.com/tools/music-fx", "apk_files.html", "https://limewire.com/studio/audio/create-music",
+        "https://huggingface.co/spaces/facebook/MusicGen", "https://www.microsoft.com"
+      ];
+      window.location.href = websites[num - 1];
+    }
+  </script>
+
 </body>
 </html>
