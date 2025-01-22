@@ -3,198 +3,100 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quantum VR-Like CTA Buttons</title>
+  <title>Recursive Phones with Shader Effects</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
   <style>
-    /* Global Variables */
-    :root {
-      --primary-color: #00ff41;
-      --dark-bg: #121212;
-      --light-glow: rgba(0, 255, 65, 0.7);
-      --dark-glow: rgba(0, 255, 65, 0.3);
-      --font-family: 'Poppins', sans-serif;
-    }
-
-    /* Global Reset and Typography */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: var(--font-family);
-      background: var(--dark-bg);
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-      perspective: 1000px;
-    }
-    h1 {
-      font-size: 2.5rem;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    /* Parallax Background */
-    .background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at center, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 1));
-      z-index: -1;
-      pointer-events: none;
-      animation: moveBg 30s infinite linear;
-    }
-    @keyframes moveBg {
-      0% { background-position: center; }
-      100% { background-position: 100% 100%; }
-    }
-
-    /* Particle Effect */
-    .particle {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      background: var(--primary-color);
-      border-radius: 50%;
-      opacity: 0.7;
-      animation: particleMovement 10s infinite linear;
-    }
-    @keyframes particleMovement {
-      0% { transform: translate3d(0, 0, 0); opacity: 1; }
-      50% { opacity: 0.4; transform: translate3d(50px, 50px, -100px); }
-      100% { opacity: 0; transform: translate3d(100px, 100px, -300px); }
-    }
-
-    /* Quantum Button Styles */
-    .cta-button {
-      position: relative;
-      padding: 16px 32px;
-      margin: 20px;
-      font-size: 1.2rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      background: transparent;
-      border: 2px solid var(--primary-color);
-      color: var(--primary-color);
-      cursor: pointer;
-      transition: all 0.4s ease-in-out;
-      box-shadow: 0 0 15px var(--primary-color);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    .cta-button:before,
-    .cta-button:after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(45deg, var(--light-glow), transparent);
-      opacity: 0;
-      transition: all 0.5s;
-      pointer-events: none;
-    }
-
-    .cta-button:after {
-      background: linear-gradient(-45deg, var(--light-glow), transparent);
-    }
-
-    .cta-button:hover {
-      transform: scale(1.05) translateY(-5px) rotateX(10deg);
-      color: #fff;
-      box-shadow: 0 0 25px var(--primary-color), 0 0 50px var(--primary-color);
-    }
-
-    .cta-button:hover:before,
-    .cta-button:hover:after {
-      opacity: 1;
-    }
-
-    /* Quantum Distort Effect */
-    .cta-button span {
-      position: relative;
-      display: inline-block;
-      z-index: 1;
-    }
-    .cta-button span::before,
-    .cta-button span::after {
-      content: attr(data-text);
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      mix-blend-mode: difference;
-      color: var(--primary-color);
-      z-index: -1;
-    }
-    .cta-button span::before {
-      animation: distort 2s infinite alternate;
-    }
-    .cta-button span::after {
-      animation: distort 3s infinite alternate-reverse;
-    }
-    @keyframes distort {
-      0% { transform: scale(1.1) skewX(5deg); }
-      50% { transform: scale(1.1) skewX(-5deg); }
-      100% { transform: scale(1.1) skewX(5deg); }
-    }
-
-    /* Animation on Button Press */
-    @keyframes buttonPress {
-      0% { transform: scale(1); }
-      50% { transform: scale(0.95); }
-      100% { transform: scale(1); }
-    }
+    body, html { margin: 0; overflow: hidden; height: 100%; }
+    canvas { display: block; }
   </style>
 </head>
 <body>
-
-  <div class="background"></div>
-
-  <!-- Dynamic Particle System -->
   <script>
-    for (let i = 0; i < 100; i++) {
-      const particle = document.createElement('div');
-      particle.classList.add('particle');
-      particle.style.left = `${Math.random() * 100}vw`;
-      particle.style.top = `${Math.random() * 100}vh`;
-      document.body.appendChild(particle);
-    }
-  </script>
+    let scene, camera, renderer;
+    let phoneGeometry, phoneMaterial, phoneMesh;
+    let phoneLayers = [];
+    let clock = new THREE.Clock();
 
-  <button class="cta-button">
-    <span data-text="Watch Cartoons">Watch Cartoons</span>
-  </button>
+    function init() {
+      // Scene setup
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
 
-  <button class="cta-button">
-    <span data-text="Google Translate">Google Translate</span>
-  </button>
-
-  <button class="cta-button">
-    <span data-text="Melodysheep">Melodysheep</span>
-  </button>
-
-  <script>
-    // Button click navigation
-    const buttons = document.querySelectorAll('.cta-button');
-    buttons.forEach((button, index) => {
-      button.addEventListener('click', () => {
-        const urls = [
-          "https://www.wcofun.net/", 
-          "https://www.google.com/search?q=english+to+spanish", 
-          "https://www.youtube.com/@melodysheep"
-        ];
-        window.location.href = urls[index];
+      // Shader material with glowing green effect for phones
+      phoneMaterial = new THREE.ShaderMaterial({
+        vertexShader: `
+          void main() {
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform float time;
+          void main() {
+            float glow = sin(time * 2.0) * 0.5 + 0.5;
+            gl_FragColor = vec4(glow, glow, 0.0, 1.0);
+          }
+        `,
+        side: THREE.DoubleSide,
+        uniforms: {
+          time: { type: 'f', value: 1.0 }
+        }
       });
-    });
+
+      // Create recursive phones with varying sizes
+      createRecursivePhones();
+
+      camera.position.z = 5;
+
+      animate();
+    }
+
+    function createPhoneLayer(x, y, z, scale) {
+      phoneMesh = new THREE.Mesh(phoneGeometry, phoneMaterial);
+      phoneMesh.position.set(x, y, z);
+      phoneMesh.scale.set(scale, scale, scale);
+      scene.add(phoneMesh);
+      phoneLayers.push(phoneMesh);
+    }
+
+    function createRecursivePhones() {
+      const maxLayers = 5;
+      let scale = 1;
+
+      for (let i = 0; i < maxLayers; i++) {
+        scale *= 0.7; // Reduce size of each phone layer
+        createPhoneLayer(0, 0, -2 * (i + 1), scale); // Add phone layer at the new position
+      }
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      // Update the shader time uniform
+      phoneMaterial.uniforms.time.value = clock.getElapsedTime();
+
+      // Rotate each layer of phones
+      phoneLayers.forEach((layer, index) => {
+        layer.rotation.x += 0.01;
+        layer.rotation.y += 0.01;
+      });
+
+      // GSAP animation for camera movement to create immersive effect
+      gsap.to(camera.position, {
+        z: 4.5 + Math.sin(clock.getElapsedTime() * 0.5) * 1.5,
+        duration: 2,
+        ease: "power1.inOut"
+      });
+
+      // Render the scene
+      renderer.render(scene, camera);
+    }
+
+    // Initialize the scene
+    init();
   </script>
 </body>
 </html>
