@@ -1,199 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quantum VR-Like CTA Buttons</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum VR-Like CTA Buttons</title>
+  <style>
+    /* Global Variables */
+    :root {
+      --primary-color: #00ff41;
+      --dark-bg: #121212;
+      --light-glow: rgba(0, 255, 65, 0.7);
+      --dark-glow: rgba(0, 255, 65, 0.3);
+      --font-family: 'Poppins', sans-serif;
+    }
 
-  :root {
-    --quantum-color: #00ff41;
-    --quantum-dark: #000;
-    --quantum-glow: rgba(0, 255, 65, 0.5);
-    --quantum-shadow: rgba(0, 255, 65, 0.8);
-  }
+    /* Global Reset and Typography */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: var(--font-family);
+      background: var(--dark-bg);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      perspective: 1000px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
 
-  body {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: var(--quantum-dark);
-    overflow: hidden;
-    font-family: 'VT323', monospace;
-    color: #fff;
-    perspective: 1000px;
-  }
+    /* Parallax Background */
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 1));
+      z-index: -1;
+      pointer-events: none;
+      animation: moveBg 30s infinite linear;
+    }
+    @keyframes moveBg {
+      0% { background-position: center; }
+      100% { background-position: 100% 100%; }
+    }
 
-  .quantum-cta {
-    margin: 20px;
-    padding: 25px 50px;
-    position: relative;
-    font-size: 24px;
-    color: var(--quantum-color);
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    text-shadow: 0 0 20px var(--quantum-color), 0 0 40px var(--quantum-color);
-    border: none;
-    background: none;
-    cursor: pointer;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    animation: quantum-flicker 3s infinite alternate;
-    transform-style: preserve-3d;
-    /* Add a slight depth for VR-like feel */
-    transform: translateZ(20px);
-  }
+    /* Particle Effect */
+    .particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: var(--primary-color);
+      border-radius: 50%;
+      opacity: 0.7;
+      animation: particleMovement 10s infinite linear;
+    }
+    @keyframes particleMovement {
+      0% { transform: translate3d(0, 0, 0); opacity: 1; }
+      50% { opacity: 0.4; transform: translate3d(50px, 50px, -100px); }
+      100% { opacity: 0; transform: translate3d(100px, 100px, -300px); }
+    }
 
-  .quantum-cta::before, .quantum-cta::after {
-    content: '';
-    position: absolute;
-    top: -5px; left: -5px;
-    right: -5px; bottom: -5px;
-    background: linear-gradient(45deg, var(--quantum-glow), transparent);
-    opacity: 0;
-    transition: opacity 0.3s, transform 0.5s;
-    z-index: -1;
-    transform: translateZ(-10px);
-  }
+    /* Quantum Button Styles */
+    .cta-button {
+      position: relative;
+      padding: 16px 32px;
+      margin: 20px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: transparent;
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+      cursor: pointer;
+      transition: all 0.4s ease-in-out;
+      box-shadow: 0 0 15px var(--primary-color);
+      border-radius: 8px;
+      overflow: hidden;
+    }
 
-  .quantum-cta::after {
-    background: linear-gradient(-45deg, var(--quantum-glow), transparent);
-  }
+    .cta-button:before,
+    .cta-button:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--light-glow), transparent);
+      opacity: 0;
+      transition: all 0.5s;
+      pointer-events: none;
+    }
 
-  .quantum-cta:hover {
-    transform: scale(1.1) rotateY(30deg) rotateX(10deg) translateZ(30px);
-    text-shadow: 0 0 30px var(--quantum-color), 0 0 50px var(--quantum-color);
-  }
+    .cta-button:after {
+      background: linear-gradient(-45deg, var(--light-glow), transparent);
+    }
 
-  .quantum-cta:hover::before, .quantum-cta:hover::after {
-    opacity: 1;
-    transform: translateZ(0);
-  }
+    .cta-button:hover {
+      transform: scale(1.05) translateY(-5px) rotateX(10deg);
+      color: #fff;
+      box-shadow: 0 0 25px var(--primary-color), 0 0 50px var(--primary-color);
+    }
 
-  @keyframes quantum-flicker {
-    0%, 100% { text-shadow: 0 0 20px var(--quantum-color); }
-    50% { text-shadow: 0 0 40px var(--quantum-color); }
-  }
+    .cta-button:hover:before,
+    .cta-button:hover:after {
+      opacity: 1;
+    }
 
-  .quantum-distort {
-    position: relative;
-    display: inline-block;
-    transform-style: preserve-3d;
-  }
+    /* Quantum Distort Effect */
+    .cta-button span {
+      position: relative;
+      display: inline-block;
+      z-index: 1;
+    }
+    .cta-button span::before,
+    .cta-button span::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      mix-blend-mode: difference;
+      color: var(--primary-color);
+      z-index: -1;
+    }
+    .cta-button span::before {
+      animation: distort 2s infinite alternate;
+    }
+    .cta-button span::after {
+      animation: distort 3s infinite alternate-reverse;
+    }
+    @keyframes distort {
+      0% { transform: scale(1.1) skewX(5deg); }
+      50% { transform: scale(1.1) skewX(-5deg); }
+      100% { transform: scale(1.1) skewX(5deg); }
+    }
 
-  .quantum-distort::before, .quantum-distort::after {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background: var(--quantum-dark);
-    color: var(--quantum-color);
-    mix-blend-mode: difference;
-    transform: translateZ(-1px);
-  }
-
-  .quantum-distort::before {
-    animation: distort 2s infinite alternate;
-  }
-
-  .quantum-distort::after {
-    animation: distort 3s infinite alternate-reverse;
-  }
-
-  @keyframes distort {
-    0% { transform: translateZ(-1px) scale(1.02) skewX(1deg); }
-    50% { transform: translateZ(-2px) scale(1.01) skewX(-1deg); }
-    100% { transform: translateZ(-1px) scale(1.02) skewX(1deg); }
-  }
-
-  .quantum-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at center, #000, #0a100d);
-    overflow: hidden;
-    z-index: -2;
-  }
-
-  .quantum-particle {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    background: var(--quantum-color);
-    border-radius: 50%;
-    animation: particle-drift 15s infinite linear;
-    /* Add depth to particles for VR effect */
-    transform: translateZ(-1000px);
-  }
-
-  @keyframes particle-drift {
-    0% { transform: translate3d(0, 0, -1000px); opacity: 0; }
-    50% { opacity: 0.5; }
-    100% { transform: translate3d(var(--x, 0), var(--y, 0), var(--z, 0)); opacity: 0; }
-  }
-
-  @keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  /* New: Parallax effect on mouse move */
-  body {
-    background-attachment: fixed;
-    background-position: center;
-  }
-
-  body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg=='); /* Transparent pixel for effect */
-    pointer-events: none;
-    z-index: -1;
-  }
-
-  body:hover::before {
-    transform: translateZ(-10px) scale(1.02);
-    transition: all 0.5s;
-  }
-</style>
+    /* Animation on Button Press */
+    @keyframes buttonPress {
+      0% { transform: scale(1); }
+      50% { transform: scale(0.95); }
+      100% { transform: scale(1); }
+    }
+  </style>
 </head>
 <body>
-  <div class="quantum-bg">
-    <script>
-      for (let i = 0; i < 500; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'quantum-particle';
-        particle.style.setProperty('--x', `${Math.random() * 200 - 100}vw`);
-        particle.style.setProperty('--y', `${Math.random() * 200 - 100}vh`);
-        particle.style.setProperty('--z', `${Math.random() * 1000 - 500}px`); // Adjusting depth for VR effect
-        document.querySelector('.quantum-bg').appendChild(particle);
-      }
-    </script>
-  </div>
 
-  <button class="quantum-cta quantum-distort" data-text="Watch Cartoons" onclick="buttonClick(1)">Watch Cartoons</button>
-  <button class="quantum-cta quantum-distort" data-text="Google Translate" onclick="buttonClick(2)">Google Translate</button>
-  <button class="quantum-cta quantum-distort" data-text="melodysheep" onclick="buttonClick(3)">melodysheep</button>
-  <!-- Add more buttons as needed -->
+  <div class="background"></div>
+
+  <!-- Dynamic Particle System -->
+  <script>
+    for (let i = 0; i < 100; i++) {
+      const particle = document.createElement('div');
+      particle.classList.add('particle');
+      particle.style.left = `${Math.random() * 100}vw`;
+      particle.style.top = `${Math.random() * 100}vh`;
+      document.body.appendChild(particle);
+    }
+  </script>
+
+  <button class="cta-button">
+    <span data-text="Watch Cartoons">Watch Cartoons</span>
+  </button>
+
+  <button class="cta-button">
+    <span data-text="Google Translate">Google Translate</span>
+  </button>
+
+  <button class="cta-button">
+    <span data-text="Melodysheep">Melodysheep</span>
+  </button>
 
   <script>
-    function buttonClick(num) {
-      const websites = [
-        "https://www.wcofun.net/", "https://www.google.com/search?q=english+to+spanish&source=hp&iflsig=AL9hbdgAAAAAZyGMPLvkd73HmTflqSYJdlVSvmh1LNVj&oq=english+", "https://www.youtube.com/@melodysheep",
-        // Add more URLs here
-      ];
-      window.location.href = websites[num - 1];
-    }
+    // Button click navigation
+    const buttons = document.querySelectorAll('.cta-button');
+    buttons.forEach((button, index) => {
+      button.addEventListener('click', () => {
+        const urls = [
+          "https://www.wcofun.net/", 
+          "https://www.google.com/search?q=english+to+spanish", 
+          "https://www.youtube.com/@melodysheep"
+        ];
+        window.location.href = urls[index];
+      });
+    });
   </script>
 </body>
 </html>
