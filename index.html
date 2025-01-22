@@ -56,6 +56,9 @@
         let deltaX = event.clientX - lastMouseX;
         let deltaY = event.clientY - lastMouseY;
 
+        // Rotate the phone based on mouse movement
+        phoneMesh.rotation.y += deltaX * 0.01;
+
         // Update camera rotation based on mouse movement
         mouseX += deltaX * 0.005;
         mouseY -= deltaY * 0.005;
@@ -77,9 +80,6 @@
 
     function animate() {
       requestAnimationFrame(animate);
-
-      // Rotate phone itself (for visual effect)
-      phoneMesh.rotation.y += 0.01;
 
       // Render the scene from the perspective of the camera
       renderer.render(scene, camera);
