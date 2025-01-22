@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Three.js Test</title>
+  <title>Interactive 3D Android Phone</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
   <style>
     body, html { margin: 0; overflow: hidden; height: 100%; }
     canvas { display: block; }
@@ -13,43 +14,74 @@
 <body>
   <script>
     let scene, camera, renderer;
-    let cube;
+    let phoneMesh;
+    let mouseX = 0, mouseY = 0;
+    let isMouseDown = false;
+    let lastMouseX = 0, lastMouseY = 0;
 
     function init() {
-      // Create the scene
+      // Scene setup
       scene = new THREE.Scene();
-
-      // Create a camera
       camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      
-      // Create the renderer
       renderer = new THREE.WebGLRenderer();
       renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(renderer.domElement);
 
-      // Create a cube geometry
-      const geometry = new THREE.BoxGeometry(1, 1, 1);
-      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-      cube = new THREE.Mesh(geometry, material);
+      // Create the 3D Android phone (a simple rectangular box)
+      const phoneGeometry = new THREE.BoxGeometry(1, 2, 0.1); // Width, Height, Depth
+      const phoneMaterial = new THREE.MeshBasicMaterial({ color: 0x4CAF50 }); // Android green
+      phoneMesh = new THREE.Mesh(phoneGeometry, phoneMaterial);
+      scene.add(phoneMesh);
 
-      // Add the cube to the scene
-      scene.add(cube);
-
-      // Move the camera back so we can see the cube
+      // Set camera position to view the phone
       camera.position.z = 5;
 
-      // Start the animation loop
+      // Add event listeners for mouse interaction
+      document.addEventListener('mousedown', onMouseDown, false);
+      document.addEventListener('mousemove', onMouseMove, false);
+      document.addEventListener('mouseup', onMouseUp, false);
+      document.addEventListener('mouseleave', onMouseUp, false);
+
       animate();
+    }
+
+    function onMouseDown(event) {
+      isMouseDown = true;
+      lastMouseX = event.clientX;
+      lastMouseY = event.clientY;
+    }
+
+    function onMouseMove(event) {
+      if (isMouseDown) {
+        let deltaX = event.clientX - lastMouseX;
+        let deltaY = event.clientY - lastMouseY;
+
+        // Update camera rotation based on mouse movement
+        mouseX += deltaX * 0.005;
+        mouseY -= deltaY * 0.005;
+
+        // Rotate camera around the phone
+        camera.position.x = Math.sin(mouseX) * 5;
+        camera.position.z = Math.cos(mouseX) * 5;
+        camera.position.y = Math.sin(mouseY) * 2;
+        camera.lookAt(phoneMesh.position);
+
+        lastMouseX = event.clientX;
+        lastMouseY = event.clientY;
+      }
+    }
+
+    function onMouseUp() {
+      isMouseDown = false;
     }
 
     function animate() {
       requestAnimationFrame(animate);
 
-      // Rotate the cube for animation
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
+      // Rotate phone itself (for visual effect)
+      phoneMesh.rotation.y += 0.01;
 
-      // Render the scene
+      // Render the scene from the perspective of the camera
       renderer.render(scene, camera);
     }
 
