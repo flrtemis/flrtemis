@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recursive Phones with Shader Effects</title>
+  <title>Three.js Test</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
   <style>
     body, html { margin: 0; overflow: hidden; height: 100%; }
     canvas { display: block; }
@@ -14,82 +13,41 @@
 <body>
   <script>
     let scene, camera, renderer;
-    let phoneGeometry, phoneMaterial, phoneMesh;
-    let phoneLayers = [];
-    let clock = new THREE.Clock();
+    let cube;
 
     function init() {
-      // Scene setup
+      // Create the scene
       scene = new THREE.Scene();
+
+      // Create a camera
       camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      
+      // Create the renderer
       renderer = new THREE.WebGLRenderer();
       renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(renderer.domElement);
 
-      // Shader material with glowing green effect for phones
-      phoneMaterial = new THREE.ShaderMaterial({
-        vertexShader: `
-          void main() {
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-          }
-        `,
-        fragmentShader: `
-          uniform float time;
-          void main() {
-            float glow = sin(time * 2.0) * 0.5 + 0.5;
-            gl_FragColor = vec4(glow, glow, 0.0, 1.0);
-          }
-        `,
-        side: THREE.DoubleSide,
-        uniforms: {
-          time: { type: 'f', value: 1.0 }
-        }
-      });
+      // Create a cube geometry
+      const geometry = new THREE.BoxGeometry(1, 1, 1);
+      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+      cube = new THREE.Mesh(geometry, material);
 
-      // Create recursive phones with varying sizes
-      createRecursivePhones();
+      // Add the cube to the scene
+      scene.add(cube);
 
+      // Move the camera back so we can see the cube
       camera.position.z = 5;
 
+      // Start the animation loop
       animate();
-    }
-
-    function createPhoneLayer(x, y, z, scale) {
-      phoneMesh = new THREE.Mesh(phoneGeometry, phoneMaterial);
-      phoneMesh.position.set(x, y, z);
-      phoneMesh.scale.set(scale, scale, scale);
-      scene.add(phoneMesh);
-      phoneLayers.push(phoneMesh);
-    }
-
-    function createRecursivePhones() {
-      const maxLayers = 5;
-      let scale = 1;
-
-      for (let i = 0; i < maxLayers; i++) {
-        scale *= 0.7; // Reduce size of each phone layer
-        createPhoneLayer(0, 0, -2 * (i + 1), scale); // Add phone layer at the new position
-      }
     }
 
     function animate() {
       requestAnimationFrame(animate);
 
-      // Update the shader time uniform
-      phoneMaterial.uniforms.time.value = clock.getElapsedTime();
-
-      // Rotate each layer of phones
-      phoneLayers.forEach((layer, index) => {
-        layer.rotation.x += 0.01;
-        layer.rotation.y += 0.01;
-      });
-
-      // GSAP animation for camera movement to create immersive effect
-      gsap.to(camera.position, {
-        z: 4.5 + Math.sin(clock.getElapsedTime() * 0.5) * 1.5,
-        duration: 2,
-        ease: "power1.inOut"
-      });
+      // Rotate the cube for animation
+      cube.rotation.x += 0.01;
+      cube.rotation.y += 0.01;
 
       // Render the scene
       renderer.render(scene, camera);
