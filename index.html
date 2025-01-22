@@ -1,199 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quantum VR-Like CTA Buttons</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-
-  :root {
-    --quantum-color: #00ff41;
-    --quantum-dark: #000;
-    --quantum-glow: rgba(0, 255, 65, 0.5);
-    --quantum-shadow: rgba(0, 255, 65, 0.8);
-  }
-
-  body {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: var(--quantum-dark);
-    overflow: hidden;
-    font-family: 'VT323', monospace;
-    color: #fff;
-    perspective: 1000px;
-  }
-
-  .quantum-cta {
-    margin: 20px;
-    padding: 25px 50px;
-    position: relative;
-    font-size: 24px;
-    color: var(--quantum-color);
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    text-shadow: 0 0 20px var(--quantum-color), 0 0 40px var(--quantum-color);
-    border: none;
-    background: none;
-    cursor: pointer;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    animation: quantum-flicker 3s infinite alternate;
-    transform-style: preserve-3d;
-    /* Add a slight depth for VR-like feel */
-    transform: translateZ(20px);
-  }
-
-  .quantum-cta::before, .quantum-cta::after {
-    content: '';
-    position: absolute;
-    top: -5px; left: -5px;
-    right: -5px; bottom: -5px;
-    background: linear-gradient(45deg, var(--quantum-glow), transparent);
-    opacity: 0;
-    transition: opacity 0.3s, transform 0.5s;
-    z-index: -1;
-    transform: translateZ(-10px);
-  }
-
-  .quantum-cta::after {
-    background: linear-gradient(-45deg, var(--quantum-glow), transparent);
-  }
-
-  .quantum-cta:hover {
-    transform: scale(1.1) rotateY(30deg) rotateX(10deg) translateZ(30px);
-    text-shadow: 0 0 30px var(--quantum-color), 0 0 50px var(--quantum-color);
-  }
-
-  .quantum-cta:hover::before, .quantum-cta:hover::after {
-    opacity: 1;
-    transform: translateZ(0);
-  }
-
-  @keyframes quantum-flicker {
-    0%, 100% { text-shadow: 0 0 20px var(--quantum-color); }
-    50% { text-shadow: 0 0 40px var(--quantum-color); }
-  }
-
-  .quantum-distort {
-    position: relative;
-    display: inline-block;
-    transform-style: preserve-3d;
-  }
-
-  .quantum-distort::before, .quantum-distort::after {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background: var(--quantum-dark);
-    color: var(--quantum-color);
-    mix-blend-mode: difference;
-    transform: translateZ(-1px);
-  }
-
-  .quantum-distort::before {
-    animation: distort 2s infinite alternate;
-  }
-
-  .quantum-distort::after {
-    animation: distort 3s infinite alternate-reverse;
-  }
-
-  @keyframes distort {
-    0% { transform: translateZ(-1px) scale(1.02) skewX(1deg); }
-    50% { transform: translateZ(-2px) scale(1.01) skewX(-1deg); }
-    100% { transform: translateZ(-1px) scale(1.02) skewX(1deg); }
-  }
-
-  .quantum-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at center, #000, #0a100d);
-    overflow: hidden;
-    z-index: -2;
-  }
-
-  .quantum-particle {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    background: var(--quantum-color);
-    border-radius: 50%;
-    animation: particle-drift 15s infinite linear;
-    /* Add depth to particles for VR effect */
-    transform: translateZ(-1000px);
-  }
-
-  @keyframes particle-drift {
-    0% { transform: translate3d(0, 0, -1000px); opacity: 0; }
-    50% { opacity: 0.5; }
-    100% { transform: translate3d(var(--x, 0), var(--y, 0), var(--z, 0)); opacity: 0; }
-  }
-
-  @keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  /* New: Parallax effect on mouse move */
-  body {
-    background-attachment: fixed;
-    background-position: center;
-  }
-
-  body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg=='); /* Transparent pixel for effect */
-    pointer-events: none;
-    z-index: -1;
-  }
-
-  body:hover::before {
-    transform: translateZ(-10px) scale(1.02);
-    transition: all 0.5s;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>360° Interactive Buttons</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { width: 100%; height: 100%; }
+    </style>
 </head>
 <body>
-  <div class="quantum-bg">
-    <script>
-      for (let i = 0; i < 500; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'quantum-particle';
-        particle.style.setProperty('--x', `${Math.random() * 200 - 100}vw`);
-        particle.style.setProperty('--y', `${Math.random() * 200 - 100}vh`);
-        particle.style.setProperty('--z', `${Math.random() * 1000 - 500}px`); // Adjusting depth for VR effect
-        document.querySelector('.quantum-bg').appendChild(particle);
-      }
+    <script type="module">
+        import * as THREE from 'https://cdn.skypack.dev/three@0.133.1';
+        import { OrbitControls } from 'https://cdn.skypack.dev/three@0.133.1/examples/jsm/controls/OrbitControls.js';
+
+        let scene, camera, renderer, controls;
+
+        const buttons = [
+            "Watch Cartoons Online", "Google Translate", "melodysheep", "GitHub", "ChatGPT", "YouTube", "APKMirror", "APKPure", "MODYOLO", "uptodown",
+            "Temporary Number", "Temporary Email", "Branch Education", "Convai", "Crushon AI", "MusicFX", "Android Apps", "LimeWire", "MusicGen", "Hotbot", "Grok"
+        ];
+
+        const websites = [
+            "https://www.wcofun.net/", "https://www.google.com/search?q=english+to+spanish&source=hp&iflsig=AL9hbdgAAAAAZyGMPLvkd73HmTflqSYJdlVSvmh1LNVj&oq=english+", "https://www.youtube.com/@melodysheep",
+            "https://github.com/flrtemis", "https://chatgpt.com/", "https://www.youtube.com/@flrtemis",
+            "https://www.apkmirror.com/", "https://apkpure.com/", "https://modyolo.com/apps",
+            "https://en.uptodown.com", "https://quackr.io/temporary-numbers/united-states", "https://temp-mail.org/en/",
+            "https://branch.education/", "https://convai.com/pipeline/create-character", "https://crushon.ai",
+            "https://aitestkitchen.withgoogle.com/tools/music-fx", "apk_files.html", "https://limewire.com/studio/audio/create-music",
+            "https://huggingface.co/spaces/facebook/MusicGen", "https://hotbot.com", "https://grok.com/"
+        ];
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.enableZoom = true;
+            controls.enablePan = false;
+
+            // Background
+            const loader = new THREE.TextureLoader();
+            loader.load('https://i.imgur.com/78n8zls.jpg', function(texture) {
+                scene.background = texture;
+            });
+
+            // Create buttons in a circle around the camera
+            const radius = 3;
+            for (let i = 0; i < buttons.length; i++) {
+                const angle = (i / buttons.length) * Math.PI * 2;
+                const x = Math.cos(angle) * radius;
+                const z = Math.sin(angle) * radius;
+
+                const geometry = new THREE.BoxGeometry(0.5, 0.2, 0.1);
+                const material = new THREE.MeshBasicMaterial({ color: 0x00ff41 });
+                const button = new THREE.Mesh(geometry, material);
+                button.position.set(x, 0, z);
+                button.lookAt(camera.position);
+                button.userData = { index: i };  // Store index for click handling
+                scene.add(button);
+
+                // Text for buttons
+                const textLoader = new THREE.FontLoader();
+                textLoader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function (font) {
+                    const textGeometry = new THREE.TextGeometry(buttons[i], {
+                        font: font,
+                        size: 0.05,
+                        height: 0,
+                        curveSegments: 4,
+                        bevelEnabled: false
+                    });
+                    const textMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+                    const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+                    textMesh.position.set(button.position.x, button.position.y + 0.3, button.position.z);
+                    textMesh.lookAt(camera.position);
+                    scene.add(textMesh);
+                });
+
+                // Add click event listener
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    window.location.href = websites[this.userData.index];
+                });
+            }
+
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }, false);
+
+        init();
     </script>
-  </div>
-
-  <button class="quantum-cta quantum-distort" data-text="Watch Cartoons" onclick="buttonClick(1)">Watch Cartoons</button>
-  <button class="quantum-cta quantum-distort" data-text="Google Translate" onclick="buttonClick(2)">Google Translate</button>
-  <button class="quantum-cta quantum-distort" data-text="melodysheep" onclick="buttonClick(3)">melodysheep</button>
-  <!-- Add more buttons as needed -->
-
-  <script>
-    function buttonClick(num) {
-      const websites = [
-        "https://www.wcofun.net/", "https://www.google.com/search?q=english+to+spanish&source=hp&iflsig=AL9hbdgAAAAAZyGMPLvkd73HmTflqSYJdlVSvmh1LNVj&oq=english+", "https://www.youtube.com/@melodysheep",
-        // Add more URLs here
-      ];
-      window.location.href = websites[num - 1];
-    }
-  </script>
 </body>
 </html>
