@@ -15,7 +15,6 @@
       --shiny-cta-highlight-subtle: #8484ff;
     }
 
-    /* Gradient properties */
     @property --gradient-angle {
       syntax: "<angle>";
       initial-value: 0deg;
@@ -56,17 +55,34 @@
       border: 1px solid transparent;
       border-radius: 360px;
       color: var(--shiny-cta-fg);
-      background: linear-gradient(var(--shiny-cta-bg), var(--shiny-cta-bg)) padding-box, 
-                  conic-gradient(
-                    from calc(var(--gradient-angle) - var(--gradient-angle-offset)),
-                    transparent,
-                    var(--shiny-cta-highlight) var(--gradient-percent),
-                    var(--gradient-shine) calc(var(--gradient-percent) * 2),
-                    var(--shiny-cta-highlight) calc(var(--gradient-percent) * 3),
-                    transparent calc(var(--gradient-percent) * 4)
-                  ) border-box;
+      background: linear-gradient(var(--shiny-cta-bg), var(--shiny-cta-bg))
+          padding-box,
+        conic-gradient(
+            from calc(var(--gradient-angle) - var(--gradient-angle-offset)),
+            transparent,
+            var(--shiny-cta-highlight) var(--gradient-percent),
+            var(--gradient-shine) calc(var(--gradient-percent) * 2),
+            var(--shiny-cta-highlight) calc(var(--gradient-percent) * 3),
+            transparent calc(var(--gradient-percent) * 4)
+          )
+          border-box;
       box-shadow: inset 0 0 0 1px var(--shiny-cta-bg-subtle);
-      transition: var(--transition);
+    }
+
+    .shiny-cta::before,
+    .shiny-cta::after,
+    span::before {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      inset-inline-start: 50%;
+      inset-block-start: 50%;
+      translate: -50% -50%;
+      z-index: -1;
+    }
+
+    .shiny-cta:active {
+      translate: 0 1px;
     }
 
     /* Dots pattern */
@@ -76,22 +92,42 @@
       --space: calc(var(--position) * 2);
       width: var(--size);
       height: var(--size);
-      background: radial-gradient(circle at var(--position) var(--position), white calc(var(--position) / 4), transparent 0)
+      background: radial-gradient(
+          circle at var(--position) var(--position),
+          white calc(var(--position) / 4),
+          transparent 0
+        )
         padding-box;
       background-size: var(--space) var(--space);
       background-repeat: space;
-      mask-image: conic-gradient(from calc(var(--gradient-angle) + 45deg), black, transparent 10% 90%, black);
+      mask-image: conic-gradient(
+        from calc(var(--gradient-angle) + 45deg),
+        black,
+        transparent 10% 90%,
+        black
+      );
       border-radius: inherit;
       opacity: 0.4;
+      z-index: -1;
     }
 
     /* Inner shimmer */
     .shiny-cta::after {
+      --animation: shimmer linear infinite;
       width: 100%;
       aspect-ratio: 1;
-      background: linear-gradient(-50deg, transparent, var(--shiny-cta-highlight), transparent);
+      background: linear-gradient(
+        -50deg,
+        transparent,
+        var(--shiny-cta-highlight),
+        transparent
+      );
       mask-image: radial-gradient(circle at bottom, transparent 40%, black);
       opacity: 0.6;
+    }
+
+    .shiny-cta span {
+      z-index: 1;
     }
 
     .shiny-cta span::before {
@@ -102,7 +138,43 @@
       opacity: 0;
     }
 
-    /* Animation */
+    /* Animate */
+    .shiny-cta {
+      --transition: 800ms cubic-bezier(0.25, 1, 0.5, 1);
+      transition: var(--transition);
+      transition-property: --gradient-angle-offset, --gradient-percent,
+        --gradient-shine;
+    }
+
+    .shiny-cta,
+    .shiny-cta::before,
+    .shiny-cta::after {
+      animation: var(--animation) var(--duration),
+        var(--animation) calc(var(--duration) / 0.4) reverse paused;
+      animation-composition: add;
+    }
+
+    .shiny-cta span::before {
+      transition: opacity var(--transition);
+      animation: calc(var(--duration) * 1.5) breathe linear infinite;
+    }
+
+    .shiny-cta:is(:hover, :focus-visible) {
+      --gradient-percent: 20%;
+      --gradient-angle-offset: 95deg;
+      --gradient-shine: var(--shiny-cta-highlight-subtle);
+
+      .shiny-cta,
+      .shiny-cta::before,
+      .shiny-cta::after {
+        animation-play-state: running;
+      }
+
+      .shiny-cta span::before {
+        opacity: 1;
+      }
+    }
+
     @keyframes gradient-angle {
       to {
         --gradient-angle: 360deg;
@@ -116,7 +188,8 @@
     }
 
     @keyframes breathe {
-      from, to {
+      from,
+      to {
         scale: 1;
       }
       50% {
@@ -124,14 +197,17 @@
       }
     }
 
-    html, body {
+    html,
+    body {
       height: 100%;
     }
 
     body {
       display: grid;
       place-items: center;
-      gap: 20px;
+      grid-template-columns: repeat(3, 1fr); /* 3 columns */
+      grid-template-rows: auto; /* Rows adjust automatically */
+      gap: 20px; /* Space between buttons */
       color: white;
       background: #02040c;
       font-family: "Inter", sans-serif;
@@ -140,69 +216,49 @@
       font-style: normal;
       -webkit-font-smoothing: antialiased;
     }
-
-    /* Responsive Grid */
-    @media (max-width: 768px) {
-      body {
-        grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
-      }
-    }
-
-    @media (max-width: 480px) {
-      body {
-        grid-template-columns: 1fr; /* 1 column on smaller screens */
-      }
-      .shiny-cta {
-        font-size: 1rem;
-        padding: 1rem 2rem; /* Adjust button padding */
-      }
-    }
-
-    /* Button interaction on hover/focus */
-    .shiny-cta:is(:hover, :focus-visible) {
-      --gradient-percent: 20%;
-      --gradient-angle-offset: 95deg;
-      --gradient-shine: var(--shiny-cta-highlight-subtle);
-    }
   </style>
 </head>
 <body>
+
   <!-- 21 Shiny CTA Buttons -->
   <button class="shiny-cta" onclick="buttonClick(1)"><span>Watch Cartoons Online</span></button>
   <button class="shiny-cta" onclick="buttonClick(2)"><span>Google Translate</span></button>
   <button class="shiny-cta" onclick="buttonClick(3)"><span>melodysheep</span></button>
   <button class="shiny-cta" onclick="buttonClick(4)"><span>GitHub</span></button>
   <button class="shiny-cta" onclick="buttonClick(5)"><span>ChatGPT</span></button>
+  
   <button class="shiny-cta" onclick="buttonClick(6)"><span>YouTube</span></button>
   <button class="shiny-cta" onclick="buttonClick(7)"><span>APKMirror</span></button>
   <button class="shiny-cta" onclick="buttonClick(8)"><span>APKPure</span></button>
   <button class="shiny-cta" onclick="buttonClick(9)"><span>MODYOLO</span></button>
   <button class="shiny-cta" onclick="buttonClick(10)"><span>uptodown</span></button>
+  
   <button class="shiny-cta" onclick="buttonClick(11)"><span>Temporary Number</span></button>
   <button class="shiny-cta" onclick="buttonClick(12)"><span>Temporary Email</span></button>
   <button class="shiny-cta" onclick="buttonClick(13)"><span>Branch Education</span></button>
   <button class="shiny-cta" onclick="buttonClick(14)"><span>Convai</span></button>
   <button class="shiny-cta" onclick="buttonClick(15)"><span>Crushon AI</span></button>
+  
   <button class="shiny-cta" onclick="buttonClick(16)"><span>MusicFX</span></button>
   <button class="shiny-cta" onclick="buttonClick(17)"><span>Android Apps</span></button>
   <button class="shiny-cta" onclick="buttonClick(18)"><span>LimeWire</span></button>
   <button class="shiny-cta" onclick="buttonClick(19)"><span>MusicGen</span></button>
   <button class="shiny-cta" onclick="buttonClick(20)"><span>Hotbot</span></button>
   <button class="shiny-cta" onclick="buttonClick(21)"><span>Grok</span></button>
-
   <script>
     function buttonClick(num) {
       const websites = [
-        "https://www.wcofun.net/", "https://www.google.com/search?q=english+to+spanish&source=hp&iflsig=AL9hbdgAAAAAZyGMPLvkd73HmTflqSYJdlVSvmh1LNVj&oq=english+", 
-        "https://www.youtube.com/@melodysheep", "https://github.com/flrtemis", "https://chatgpt.com/", 
-        "https://www.youtube.com/@flrtemis", "https://www.apkmirror.com/", "https://apkpure.com/", "https://modyolo.com/apps", 
-        "https://en.uptodown.com", "https://quackr.io/temporary-numbers/united-states", "https://temp-mail.org/en/", 
-        "https://branch.education/", "https://convai.com/pipeline/create-character", "https://crushon.ai", 
-        "https://aitestkitchen.withgoogle.com/tools/music-fx", "apk_files.html", "https://limewire.com/studio/audio/create-music", 
-        "https://huggingface.co/spaces/facebook/MusicGen", "https://hotbot.com", "https://grok.com/"
+        "https://www.wcofun.net/", "https://www.google.com/search?q=english+to+spanish&source=hp&iflsig=AL9hbdgAAAAAZyGMPLvkd73HmTflqSYJdlVSvmh1LNVj&oq=english+", "https://www.youtube.com/@melodysheep",
+        "https://github.com/flrtemis", "https://chatgpt.com/", "https://www.youtube.com/@flrtemis",
+        "https://www.apkmirror.com/", "https://apkpure.com/", "https://modyolo.com/apps",
+        "https://en.uptodown.com", "https://quackr.io/temporary-numbers/united-states", "https://temp-mail.org/en/",
+        "https://branch.education/", "https://convai.com/pipeline/create-character", "https://crushon.ai",
+        "https://aitestkitchen.withgoogle.com/tools/music-fx", "apk_files.html", "https://limewire.com/studio/audio/create-music",
+        "https://huggingface.co/spaces/facebook/MusicGen", "https://hotbot.com", "https://grok.com/",
       ];
       window.location.href = websites[num - 1];
     }
   </script>
+
 </body>
 </html>
