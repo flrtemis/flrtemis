@@ -64,7 +64,7 @@
     color: var(--ultra-dark);
     border: none;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease;
   }
 
   .controls button:hover {
@@ -219,6 +219,15 @@
   const ctaContainer = ctaContainerEl;
   const searchInput = searchInputEl;
   let soundEnabled = true;
+  let lastHoveredColor = "#00ff95"; // Initial color
+
+  // Function to handle color change on hover
+  function handleColorChange() {
+    const root = document.documentElement;
+    const newColor = lastHoveredColor === '#00ff95' ? '#ff00de' : '#00ff95';
+    root.style.setProperty('--ultra-color', newColor);
+    lastHoveredColor = newColor;
+  }
 
   // Function to create a button
   function createButton(data) {
@@ -238,11 +247,7 @@
 
     button.addEventListener("mouseenter", () => {
       if (soundEnabled) playSound("hover");
-      // Change color scheme on hover
-      const root = document.documentElement;
-      const currentColor = getComputedStyle(root).getPropertyValue('--ultra-color');
-      const newColor = currentColor === '#00ff95' ? '#ff00de' : '#00ff95';
-      root.style.setProperty('--ultra-color', newColor);
+      handleColorChange();  // Change color on hover
     });
 
     return button;
