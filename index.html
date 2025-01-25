@@ -6,7 +6,6 @@
 
 <div class="controls">
   <input type="text" id="searchInputEl" placeholder="Search buttons...">
-  <button id="colorSchemeBtn" onclick="toggleColorScheme()">Toggle Color Scheme</button>
 </div>
 
 <div class="cta-container" id="ctaContainerEl"></div>
@@ -193,7 +192,6 @@
 </style>
 
 <script>
-  // List of all 21 CTA buttons with tooltips and URLs
   const buttonsData = [
     { text: "Watch Cartoons", tooltip: "Go to WCOFun", url: "https://www.wcofun.net/" },
     { text: "Google Translate", tooltip: "Translate Languages", url: "https://translate.google.com" },
@@ -240,6 +238,11 @@
 
     button.addEventListener("mouseenter", () => {
       if (soundEnabled) playSound("hover");
+      // Change color scheme on hover
+      const root = document.documentElement;
+      const currentColor = getComputedStyle(root).getPropertyValue('--ultra-color');
+      const newColor = currentColor === '#00ff95' ? '#ff00de' : '#00ff95';
+      root.style.setProperty('--ultra-color', newColor);
     });
 
     return button;
@@ -277,15 +280,6 @@
     cosmicBg.appendChild(star);
   }
 
-  // Color scheme toggle
-  function toggleColorScheme() {
-    const root = document.documentElement;
-    const currentColor = getComputedStyle(root).getPropertyValue('--ultra-color');
-    const newColor = currentColor === '#00ff95' ? '#ff00de' : '#00ff95';
-    root.style.setProperty('--ultra-color', newColor);
-    if (soundEnabled) playSound("toggle");
-  }
-
   // Sound effects
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -308,13 +302,6 @@
         gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
         oscillator.start();
         oscillator.stop(audioContext.currentTime + 0.15);
-        break;
-      case "toggle":
-        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-        oscillator.start();
-        oscillator.frequency.linearRampToValueAtTime(1200, audioContext.currentTime + 0.1);
-        oscillator.stop(audioContext.currentTime + 0.1);
         break;
     }
   }
