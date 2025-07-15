@@ -1,176 +1,202 @@
-<!DOCTYPE html>
-<html style="--ultra-color: #00ff95;">
+<!-- Hyperionics-OriginHtmlfile:///storage/emulated/0/Download/%E2%A9%98%EA%9D%9A%F0%9D%98%9B%F0%9D%95%B0%F0%9D%98%94%F0%9D%98%90%E2%B2%8A%E2%84%A2_Hybrid.html -->
 <head>
-    <title>⩘Ꝛ𝘛𝕰𝘔𝘐Ⲋ</title>
+    <title>⩘Ꝛ𝘛𝕰𝘔𝘐Ⲋ™</title>
     <style>
         * { margin: 0; padding: 0; }
         canvas { display: block; }
-        #ui { position: fixed; top: 20px; width: 100%; text-align: center; }
-        h1 { color: #00ff95; font-family: 'Orbitron', sans-serif; 
-             text-shadow: 0 0 20px #00ff95; pointer-events: none; }
+        #ui { position: fixed; top: 20px; width: 100%; text-align: center; z-index: 1; }
+        h1 { color: #00ff95; font-family: 'Orbitron', sans-serif; text-shadow: 0 0 20px #00ff95; pointer-events: none; }
+        #mobile-controls button {
+            font-size: 24px;
+            padding: 10px;
+            margin: 5px;
+            background-color: #111;
+            color: #00ff95;
+            border: 1px solid #00ff95;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
     <div id="ui">
         <h1>⩘Ꝛ𝘛𝕰𝘔𝘐Ⲋ™</h1>
     </div>
+    <div id="mobile-controls" style="display:none; position:fixed; bottom:20px; left:20px; z-index:999;">
+        <button ontouchstart="move.forward = true" ontouchend="move.forward = false">↑</button><br>
+        <button ontouchstart="move.left = true" ontouchend="move.left = false">←</button>
+        <button ontouchstart="move.backward = true" ontouchend="move.backward = false">↓</button>
+        <button ontouchstart="move.right = true" ontouchend="move.right = false">→</button>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/PointerLockControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-
     <script>
-        let scene, camera, renderer, controls;
-        let buttons = [];
-        const BUTTON_COLUMNS = 5;
-        const BUTTON_SPACING = 2.5;
+let scene, camera, renderer, controls, isMobile;
+let buildings = [];
+const MOVE_SPEED = 0.1;
+const BUILDING_SIZE = 5;
+const TOWN_SIZE = 50;
+const move = { forward: false, backward: false, left: false, right: false };
 
-        init();
-        animate();
+init();
+animate();
 
-        function init() {
-            // Scene setup
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
+function init() {
+    isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-            // Camera position
-            camera.position.z = 25;
-            camera.position.y = 10;
-            camera.lookAt(0, 0, 0);
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
 
-            // Controls
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
+    if (isMobile) {
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableZoom = true;
+        controls.enablePan = false;
+        controls.target.set(0, 2, 0);
+        document.getElementById("mobile-controls").style.display = "block";
+    } else {
+        controls = new THREE.PointerLockControls(camera, document.body);
+        document.addEventListener('click', () => controls.lock());
+        scene.add(controls.getObject());
 
-            // Lighting
-            const ambientLight = new THREE.AmbientLight(0x404040);
-            scene.add(ambientLight);
-            
-            const pointLight = new THREE.PointLight(0x00ff95, 1, 100);
-            pointLight.position.set(0, 20, 0);
-            scene.add(pointLight);
-
-            // Create buttons
-            create3DInterface();
-
-            // Window resize handler
-            window.addEventListener('resize', onWindowResize, false);
-        }
-
-        function create3DInterface() {
-            const buttonData = [
-                { text: "Watch Cartoons", url: "https://www.wcofun.net/" },
-				{ text: "Google Translate", url: "https://translate.google.com" },
-				{ text: "Melodysheep", url: "https://www.youtube.com/@melodysheep" },
-				{ text: "GitHub", url: "https://github.com/flrtemis" },
-				{ text: "ChatGPT", url: "https://chatgpt.com/" },
-				{ text: "YouTube", url: "https://www.youtube.com" },
-				{ text: "APKMirror", url: "https://www.apkmirror.com/" },
-				{ text: "APKPure", url: "https://apkpure.com/" },
-				{ text: "MODYOLO", url: "https://modyolo.com/apps" },
-				{ text: "Uptodown", url: "https://en.uptodown.com" },
-				{ text: "Temporary Number", url: "https://quackr.io/temporary-numbers/united-states" },
-				{ text: "Temporary Email", url: "https://temp-mail.org/en/" },
-				{ text: "Branch Education", url: "https://branch.education/" },
-				{ text: "Convai", url: "https://convai.com/pipeline/create-character" },
-				{ text: "Crushon AI", url: "https://crushon.ai" },
-				{ text: "MusicFX", url: "https://aitestkitchen.withgoogle.com/tools/music-fx" },
-				{ text: "LimeWire", url: "https://limewire.com/studio/audio/create-music" },
-				{ text: "MusicGen", url: "https://huggingface.co/spaces/facebook/MusicGen" },
-				{ text: "Hotbot", url: "https://hotbot.com" },
-				{ text: "Grok", url: "https://grok.com/" },
-                // ... (keep your existing button data array here)
-            ];
-
-            buttonData.forEach((data, index) => {
-                // Create button geometry
-                const geometry = new THREE.PlaneGeometry(4, 1);
-                const material = new THREE.MeshPhongMaterial({
-                    color: 0x000000,
-                    emissive: 0x00ff95,
-                    emissiveIntensity: 0.3,
-                    side: THREE.DoubleSide
-                });
-
-                const button = new THREE.Mesh(geometry, material);
-                
-                // Position buttons in grid
-                const row = Math.floor(index / BUTTON_COLUMNS);
-                const col = index % BUTTON_COLUMNS;
-                
-                button.position.x = (col - BUTTON_COLUMNS/2) * BUTTON_SPACING;
-                button.position.y = -row * BUTTON_SPACING;
-                button.position.z = Math.sin(col * 0.5) * 2; // Add depth variation
-
-                // Add text label
-                const textTexture = createTextTexture(data.text);
-                const textMaterial = new THREE.MeshBasicMaterial({
-                    map: textTexture,
-                    transparent: true
-                });
-                const textMesh = new THREE.Mesh(geometry, textMaterial);
-                button.add(textMesh);
-
-                // Add interactivity
-                button.userData = { url: data.url };
-                button.cursor = 'pointer';
-                buttons.push(button);
-                scene.add(button);
-            });
-        }
-
-        function createTextTexture(text) {
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.width = 1024;
-            canvas.height = 256;
-            
-            context.fillStyle = '#00ff95';
-            context.font = '40px Orbitron';
-            context.textAlign = 'center';
-            context.textBaseline = 'middle';
-            context.fillText(text, canvas.width/2, canvas.height/2);
-            
-            return new THREE.CanvasTexture(canvas);
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            // Add subtle animation to buttons
-            buttons.forEach((button, index) => {
-                button.position.y += Math.sin(Date.now() * 0.001 + index) * 0.005;
-                button.rotation.z = Math.sin(Date.now() * 0.001 + index) * 0.02;
-            });
-
-            controls.update();
-            renderer.render(scene, camera);
-        }
-
-        // Raycasting for interaction
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-
-        window.addEventListener('click', (event) => {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(buttons);
-
-            if (intersects.length > 0) {
-                window.open(intersects[0].object.userData.url, '_blank');
-            }
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyW') move.forward = true;
+            if (e.code === 'KeyS') move.backward = true;
+            if (e.code === 'KeyA') move.left = true;
+            if (e.code === 'KeyD') move.right = true;
         });
-    </script>
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'KeyW') move.forward = false;
+            if (e.code === 'KeyS') move.backward = false;
+            if (e.code === 'KeyA') move.left = false;
+            if (e.code === 'KeyD') move.right = false;
+        });
+    }
+
+    camera.position.y = 2;
+    camera.position.z = TOWN_SIZE / 2;
+
+    const ambientLight = new THREE.AmbientLight(0x404040);
+    scene.add(ambientLight);
+    const pointLight = new THREE.PointLight(0x00ff95, 1, 100);
+    pointLight.position.set(0, 20, 0);
+    scene.add(pointLight);
+
+    const groundGeo = new THREE.PlaneGeometry(TOWN_SIZE, TOWN_SIZE);
+    const groundMat = new THREE.MeshPhongMaterial({ color: 0x222222 });
+    const ground = new THREE.Mesh(groundGeo, groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    scene.add(ground);
+
+    createTown();
+    window.addEventListener('resize', onWindowResize, false);
+}
+
+function createTown() {
+    const buildingData = [
+        { text: "Watch Cartoons", url: "https://www.wcofun.net/" },
+        { text: "Google Translate", url: "https://translate.google.com" },
+        { text: "Melodysheep", url: "https://www.youtube.com/@melodysheep" },
+        { text: "GitHub", url: "https://github.com/flrtemis" },
+        { text: "ChatGPT", url: "https://chatgpt.com/" },
+        { text: "YouTube", url: "https://www.youtube.com" },
+        { text: "APKMirror", url: "https://www.apkmirror.com/" },
+        { text: "APKPure", url: "https://apkpure.com/" },
+        { text: "MODYOLO", url: "https://modyolo.com/apps" },
+        { text: "Uptodown", url: "https://en.uptodown.com" },
+        { text: "Temporary Number", url: "https://quackr.io/temporary-numbers/united-states" },
+        { text: "Temporary Email", url: "https://temp-mail.org/en/" },
+        { text: "Branch Education", url: "https://branch.education/" },
+        { text: "Convai", url: "https://convai.com/pipeline/create-character" },
+        { text: "Crushon AI", url: "https://crushon.ai" },
+        { text: "MusicFX", url: "https://aitestkitchen.withgoogle.com/tools/music-fx" },
+        { text: "LimeWire", url: "https://limewire.com/studio/audio/create-music" },
+        { text: "MusicGen", url: "https://huggingface.co/spaces/facebook/MusicGen" },
+        { text: "Hotbot", url: "https://hotbot.com" },
+        { text: "Grok", url: "https://grok.com/" },
+    ];
+
+    buildingData.forEach((data, index) => {
+        const geometry = new THREE.BoxGeometry(BUILDING_SIZE, BUILDING_SIZE, BUILDING_SIZE);
+        const material = new THREE.MeshPhongMaterial({ color: 0x000000, emissive: 0x00ff95, emissiveIntensity: 0.3 });
+        const building = new THREE.Mesh(geometry, material);
+        const row = Math.floor(index / 5);
+        const col = index % 5;
+        building.position.x = (col - 2) * (BUILDING_SIZE + 2);
+        building.position.z = (row - 2) * (BUILDING_SIZE + 2);
+        building.position.y = BUILDING_SIZE / 2;
+
+        const textTexture = createTextTexture(data.text);
+        const textMat = new THREE.MeshBasicMaterial({ map: textTexture, transparent: true });
+        const textGeo = new THREE.PlaneGeometry(BUILDING_SIZE, 1);
+        const textMesh = new THREE.Mesh(textGeo, textMat);
+        textMesh.position.y = BUILDING_SIZE + 1;
+        building.add(textMesh);
+
+        building.userData = { url: data.url };
+        buildings.push(building);
+        scene.add(building);
+    });
+}
+
+function createTextTexture(text) {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = 1024;
+    canvas.height = 256;
+    context.fillStyle = '#00ff95';
+    context.font = '40px Orbitron';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText(text, canvas.width / 2, canvas.height / 2);
+    return new THREE.CanvasTexture(canvas);
+}
+
+function updateMovement() {
+    const velocity = new THREE.Vector3();
+    const direction = new THREE.Vector3();
+    direction.z = Number(move.forward) - Number(move.backward);
+    direction.x = Number(move.right) - Number(move.left);
+    direction.normalize();
+
+    if (move.forward || move.backward) velocity.z -= direction.z * MOVE_SPEED;
+    if (move.left || move.right) velocity.x -= direction.x * MOVE_SPEED;
+
+    if (isMobile) {
+        camera.position.x -= velocity.x;
+        camera.position.z -= velocity.z;
+        controls.update();
+    } else {
+        controls.moveRight(-velocity.x);
+        controls.moveForward(-velocity.z);
+    }
+
+    const playerPos = isMobile ? camera.position : controls.getObject().position;
+    buildings.forEach(building => {
+        const distance = playerPos.distanceTo(building.position);
+        if (distance < BUILDING_SIZE / 2 + 1) {
+            window.open(building.userData.url, '_blank');
+            playerPos.z = TOWN_SIZE / 2;
+            playerPos.x = 0;
+        }
+    });
+}
+
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    updateMovement();
+    renderer.render(scene, camera);
+}
+    </script><canvas width="384" height="707" style="display: block; width: 384px; height: 707px;"></canvas>
+
+
 </body>
-</html>
